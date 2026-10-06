@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Student Task Manager — organize, track, and manage your academic tasks effortlessly." />
+  <title>Student Task Manager</title>
+
+  <!-- Google Fonts — Inter for clean, modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header id="app-header" class="app-header">
+    <div class="header-content">
+      <!-- Badge + Title -->
+      <div class="header-badge">📚 Academic</div>
+      <h1 class="header-title">Student Task Manager</h1>
+      <p class="header-subtitle">
+        Organize your assignments, projects, and study sessions — all in one place.
+      </p>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main id="app-main" class="main-grid">
+
+    <!-- ── Left Column: Add Task Form ── -->
+    <section id="form-section" class="card form-card" aria-label="Add a new task">
+      <h2 class="card-heading">
+        <span class="card-icon">✏️</span> Add New Task
+      </h2>
+
+      <form id="task-form" class="task-form" novalidate>
+        <!-- Task Title -->
+        <div class="form-group">
+          <label for="task-title" class="form-label">Task Title</label>
+          <input
+            type="text"
+            id="task-title"
+            class="form-input"
+            placeholder="e.g. Complete Math Homework"
+            autocomplete="off"
+            required
+          />
+        </div>
+
+        <!-- Task Description -->
+        <div class="form-group">
+          <label for="task-desc" class="form-label">Description</label>
+          <textarea
+            id="task-desc"
+            class="form-input form-textarea"
+            rows="4"
+            placeholder="Add details, deadlines, or notes…"
+          ></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submit-btn" class="btn btn-primary">
+          <span class="btn-icon">＋</span> Add Task
+        </button>
+      </form>
+    </section>
+
+    <!-- ── Right Column: Task List ── -->
+    <section id="list-section" class="card list-card" aria-label="Your task list">
+      <div class="list-header">
+        <h2 class="card-heading">
+          <span class="card-icon">📋</span> Your Tasks
+        </h2>
+        <!-- Dynamic task counter badge -->
+        <span id="task-counter" class="badge">3</span>
+      </div>
+
+      <!-- Task list container — new tasks are prepended here -->
+      <div id="task-list" class="task-list">
+
+        <!-- Sample Task 1 -->
+        <article class="task-card" data-task-id="sample-1">
+          <div class="task-card-header">
+            <h3 class="task-title">Finish Research Paper</h3>
+          </div>
+          <p class="task-desc">
+            Complete the literature review for the CS capstone project. Deadline: Friday.
+          </p>
+        </article>
+
+        <!-- Sample Task 2 -->
+        <article class="task-card" data-task-id="sample-2">
+          <div class="task-card-header">
+            <h3 class="task-title">Study for Algorithms Exam</h3>
+          </div>
+          <p class="task-desc">
+            Review graph traversal, dynamic programming, and greedy algorithms chapters.
+          </p>
+        </article>
+
+        <!-- Sample Task 3 -->
+        <article class="task-card" data-task-id="sample-3">
+          <div class="task-card-header">
+            <h3 class="task-title">Group Presentation Slides</h3>
+          </div>
+          <p class="task-desc">
+            Design 12 slides for the Software Engineering group presentation due next Monday.
+          </p>
+        </article>
+
+      </div><!-- /.task-list -->
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="app-footer" class="app-footer">
+    <p>&copy; 2026 Student Task Manager &mdash; Built for learners, by learners.</p>
+  </footer>
+
+  <!-- Application logic -->
+  <script src="script.js"></script>
+</body>
+</html>
