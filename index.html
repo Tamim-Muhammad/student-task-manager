@@ -55,6 +55,16 @@
                         placeholder="Add details, deadlines, or notes…"></textarea>
                 </div>
 
+                <!-- Task Priority -->
+                <div class="form-group">
+                    <label for="task-priority" class="form-label">Priority</label>
+                    <select id="task-priority" class="form-input form-select">
+                        <option value="High">High Priority</option>
+                        <option value="Medium" selected>Medium Priority</option>
+                        <option value="Low">Low Priority</option>
+                    </select>
+                </div>
+
                 <!-- Submit Button -->
                 <button type="submit" id="submit-btn" class="btn btn-primary">
                     <span class="btn-icon">＋</span> Add Task
@@ -76,13 +86,19 @@
             <div id="task-list" class="task-list">
 
                 <!-- Sample Task 1 -->
-                <article class="task-card" data-task-id="sample-1" data-status="Pending">
+                <article class="task-card" data-task-id="sample-1" data-status="Pending" data-priority="High">
                     <div class="task-card-header">
                         <h3 class="task-title">Finish Research Paper</h3>
-                        <button type="button" class="status-badge status-pending" title="Click to toggle status" aria-label="Status: Pending. Click to toggle">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Pending</span>
-                        </button>
+                        <div class="task-badges">
+                            <span class="priority-badge priority-high" title="Priority: High">
+                                <span class="priority-indicator"></span>
+                                High
+                            </span>
+                            <button type="button" class="status-badge status-pending" title="Click to toggle status" aria-label="Status: Pending. Click to toggle">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Pending</span>
+                            </button>
+                        </div>
                     </div>
                     <p class="task-desc">
                         Complete the literature review for the CS capstone project. Deadline: Friday.
@@ -90,13 +106,19 @@
                 </article>
 
                 <!-- Sample Task 2 -->
-                <article class="task-card task-card--completed" data-task-id="sample-2" data-status="Completed">
+                <article class="task-card task-card--completed" data-task-id="sample-2" data-status="Completed" data-priority="Medium">
                     <div class="task-card-header">
                         <h3 class="task-title">Study for Algorithms Exam</h3>
-                        <button type="button" class="status-badge status-completed" title="Click to toggle status" aria-label="Status: Completed. Click to toggle">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Completed</span>
-                        </button>
+                        <div class="task-badges">
+                            <span class="priority-badge priority-medium" title="Priority: Medium">
+                                <span class="priority-indicator"></span>
+                                Medium
+                            </span>
+                            <button type="button" class="status-badge status-completed" title="Click to toggle status" aria-label="Status: Completed. Click to toggle">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Completed</span>
+                            </button>
+                        </div>
                     </div>
                     <p class="task-desc">
                         Review graph traversal, dynamic programming, and greedy algorithms chapters.
@@ -104,13 +126,19 @@
                 </article>
 
                 <!-- Sample Task 3 -->
-                <article class="task-card" data-task-id="sample-3" data-status="Pending">
+                <article class="task-card" data-task-id="sample-3" data-status="Pending" data-priority="Low">
                     <div class="task-card-header">
                         <h3 class="task-title">Group Presentation Slides</h3>
-                        <button type="button" class="status-badge status-pending" title="Click to toggle status" aria-label="Status: Pending. Click to toggle">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Pending</span>
-                        </button>
+                        <div class="task-badges">
+                            <span class="priority-badge priority-low" title="Priority: Low">
+                                <span class="priority-indicator"></span>
+                                Low
+                            </span>
+                            <button type="button" class="status-badge status-pending" title="Click to toggle status" aria-label="Status: Pending. Click to toggle">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Pending</span>
+                            </button>
+                        </div>
                     </div>
                     <p class="task-desc">
                         Design 12 slides for the Software Engineering group presentation due next Monday.
