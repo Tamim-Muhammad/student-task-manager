@@ -3,10 +3,12 @@
  *
  * Features:
  *  1. Listen for the task form's submit event.
- *  2. Validate that the title is not blank.
- *  3. Dynamically create a new task card and prepend it to the list.
- *  4. Update the task counter badge.
- *  5. Clear form inputs after a successful submission.
+ *  2. Validate that the title is not blank (with error flash).
+ *  3. Dynamically create a new task card with status "Pending" by default.
+ *  4. Prepend newly created tasks to the list.
+ *  5. Interactive toggle: switch status between "Pending" and "Completed" on click.
+ *  6. Update the task counter badge dynamically.
+ *  7. Clear form inputs after a successful submission.
  */
 
 // ── DOM References ──
@@ -58,19 +60,61 @@ function flashTitleError() {
 }
 
 /**
+ * Set the status of a given task card and update its badge/DOM representation.
+ *
+ * @param {HTMLElement} taskCard
+ * @param {'Pending'|'Completed'} newStatus
+ */
+function setTaskStatus(taskCard, newStatus) {
+  taskCard.setAttribute('data-status', newStatus);
+  taskCard.dataset.status = newStatus;
+
+  const isCompleted = newStatus === 'Completed';
+  taskCard.classList.toggle('task-card--completed', isCompleted);
+
+  const badgeBtn = taskCard.querySelector('.status-badge');
+  if (badgeBtn) {
+    badgeBtn.className = `status-badge ${isCompleted ? 'status-completed' : 'status-pending'}`;
+    badgeBtn.setAttribute('title', 'Click to toggle status');
+    badgeBtn.setAttribute('aria-label', `Status: ${newStatus}. Click to toggle`);
+
+    const statusText = badgeBtn.querySelector('.status-text');
+    if (statusText) {
+      statusText.textContent = newStatus;
+    }
+  }
+}
+
+/**
+ * Toggle a task card between 'Pending' and 'Completed'.
+ *
+ * @param {HTMLElement} taskCard
+ */
+function toggleTaskStatus(taskCard) {
+  const currentStatus = taskCard.getAttribute('data-status') || 'Pending';
+  const nextStatus = currentStatus === 'Pending' ? 'Completed' : 'Pending';
+  setTaskStatus(taskCard, nextStatus);
+}
+
+/**
  * Create a task card DOM element from the provided data.
  *
- * @param {string} id    — Unique task ID.
- * @param {string} title — Task title text.
- * @param {string} desc  — Task description text.
+ * @param {string} id             — Unique task ID.
+ * @param {string} title          — Task title text.
+ * @param {string} desc           — Task description text.
+ * @param {'Pending'|'Completed'} [status='Pending'] — Status property, defaults to 'Pending'.
  * @returns {HTMLElement} The constructed <article> element.
  */
-function createTaskCard(id, title, desc) {
+function createTaskCard(id, title, desc, status = 'Pending') {
   const article = document.createElement('article');
-  article.className = 'task-card task-card--new';
-  article.setAttribute('data-task-id', id);
+  const isCompleted = status === 'Completed';
 
-  // Build inner HTML
+  article.className = `task-card task-card--new${isCompleted ? ' task-card--completed' : ''}`;
+  article.setAttribute('data-task-id', id);
+  article.setAttribute('data-status', status);
+  article.dataset.status = status;
+
+  // Header: contains title and status badge
   const headerDiv = document.createElement('div');
   headerDiv.className = 'task-card-header';
 
@@ -78,10 +122,28 @@ function createTaskCard(id, title, desc) {
   h3.className = 'task-title';
   h3.textContent = title;
 
+  // Interactive status badge button
+  const badgeBtn = document.createElement('button');
+  badgeBtn.type = 'button';
+  badgeBtn.className = `status-badge ${isCompleted ? 'status-completed' : 'status-pending'}`;
+  badgeBtn.setAttribute('title', 'Click to toggle status');
+  badgeBtn.setAttribute('aria-label', `Status: ${status}. Click to toggle`);
+
+  const dot = document.createElement('span');
+  dot.className = 'status-dot';
+
+  const text = document.createElement('span');
+  text.className = 'status-text';
+  text.textContent = status;
+
+  badgeBtn.appendChild(dot);
+  badgeBtn.appendChild(text);
+
   headerDiv.appendChild(h3);
+  headerDiv.appendChild(badgeBtn);
   article.appendChild(headerDiv);
 
-  // Only add a description paragraph if the user provided one
+  // Description paragraph (if provided)
   if (desc) {
     const p = document.createElement('p');
     p.className = 'task-desc';
@@ -89,7 +151,7 @@ function createTaskCard(id, title, desc) {
     article.appendChild(p);
   }
 
-  // Remove the entrance animation class once it completes
+  // Remove the entrance animation class once it finishes
   article.addEventListener('animationend', () => {
     article.classList.remove('task-card--new');
   });
@@ -97,9 +159,20 @@ function createTaskCard(id, title, desc) {
   return article;
 }
 
+// ── Event Delegation for Status Toggle ──
+taskList.addEventListener('click', function handleListClick(event) {
+  const badgeBtn = event.target.closest('.status-badge');
+  if (badgeBtn) {
+    const taskCard = badgeBtn.closest('.task-card');
+    if (taskCard) {
+      toggleTaskStatus(taskCard);
+    }
+  }
+});
+
 // ── Form Submission Handler ──
 taskForm.addEventListener('submit', function handleSubmit(event) {
-  // Prevent the default page reload
+  // Prevent default page reload
   event.preventDefault();
 
   // Extract and trim input values
@@ -113,17 +186,24 @@ taskForm.addEventListener('submit', function handleSubmit(event) {
     return;
   }
 
-  // Build a new task card
-  const id   = generateTaskId();
-  const card = createTaskCard(id, title, desc);
+  // Create new task object with default status 'Pending'
+  const newTask = {
+    id: generateTaskId(),
+    title: title,
+    desc: desc,
+    status: 'Pending'
+  };
 
-  // Prepend the new card so the latest task appears first
+  // Build the task card DOM element
+  const card = createTaskCard(newTask.id, newTask.title, newTask.desc, newTask.status);
+
+  // Prepend the new card so latest task appears first
   taskList.prepend(card);
 
   // Increment and update the counter badge
   taskCount += 1;
   updateCounter();
 
-  // Reset the form for the next entry
+  // Reset form inputs for next entry
   resetForm();
 });

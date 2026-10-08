@@ -297,7 +297,8 @@ body {
   padding: 1.1rem 1.25rem;
   transition: transform 0.2s var(--ease-out),
               box-shadow 0.2s var(--ease-out),
-              border-color 0.2s var(--ease-out);
+              border-color 0.2s var(--ease-out),
+              background-color 0.2s var(--ease-out);
 }
 
 .task-card:hover {
@@ -307,6 +308,10 @@ body {
 }
 
 .task-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: 0.4rem;
 }
 
@@ -314,6 +319,102 @@ body {
   font-size: 1rem;
   font-weight: 600;
   color: var(--slate-800);
+  word-break: break-word;
+  transition: color 0.2s var(--ease-out);
+}
+
+/* ── Status Badges & Interactive Toggle ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.2s var(--ease-out),
+              color 0.2s var(--ease-out),
+              border-color 0.2s var(--ease-out),
+              transform 0.15s var(--ease-out),
+              box-shadow 0.2s var(--ease-out);
+}
+
+.status-badge:hover {
+  transform: translateY(-1px);
+}
+
+.status-badge:active {
+  transform: translateY(0);
+}
+
+.status-badge:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Pending status: warm amber badge */
+.status-pending {
+  background-color: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.status-pending .status-dot {
+  background-color: #f59e0b;
+}
+
+.status-pending:hover {
+  background-color: #fef3c7;
+  border-color: #fcd34d;
+  color: #92400e;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.15);
+}
+
+/* Completed status: fresh emerald badge */
+.status-completed {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.status-completed .status-dot {
+  background-color: #10b981;
+}
+
+.status-completed:hover {
+  background-color: #d1fae5;
+  border-color: #6ee7b7;
+  color: #065f46;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.15);
+}
+
+/* Completed Task Card Appearance */
+.task-card.task-card--completed {
+  border-left-color: #10b981;
+  background-color: #fbfdfc;
+}
+
+.task-card.task-card--completed:hover {
+  border-left-color: #059669;
+}
+
+.task-card.task-card--completed .task-title {
+  color: var(--slate-600);
 }
 
 .task-desc {
