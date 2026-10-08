@@ -4,19 +4,22 @@
  * Features:
  *  1. Listen for the task form's submit event.
  *  2. Validate that the title is not blank (with error flash).
- *  3. Dynamically create a new task card with status "Pending" by default.
- *  4. Prepend newly created tasks to the list.
- *  5. Interactive toggle: switch status between "Pending" and "Completed" on click.
- *  6. Update the task counter badge dynamically.
- *  7. Clear form inputs after a successful submission.
+ *  3. Read selected priority (High / Medium / Low, defaulting to Medium).
+ *  4. Dynamically create a new task card with status "Pending" and selected priority.
+ *  5. Render color-coded priority and status badges inside the card header.
+ *  6. Prepend newly created tasks to the list.
+ *  7. Interactive toggle: switch status between "Pending" and "Completed" on click.
+ *  8. Update the task counter badge dynamically.
+ *  9. Clear form inputs and reset priority after a successful submission.
  */
 
 // ── DOM References ──
-const taskForm    = document.getElementById('task-form');
-const titleInput  = document.getElementById('task-title');
-const descInput   = document.getElementById('task-desc');
-const taskList    = document.getElementById('task-list');
-const taskCounter = document.getElementById('task-counter');
+const taskForm      = document.getElementById('task-form');
+const titleInput    = document.getElementById('task-title');
+const descInput     = document.getElementById('task-desc');
+const priorityInput = document.getElementById('task-priority');
+const taskList      = document.getElementById('task-list');
+const taskCounter   = document.getElementById('task-counter');
 
 // Running counter — initialised from the badge's current value
 let taskCount = parseInt(taskCounter.textContent, 10) || 0;
@@ -37,11 +40,14 @@ function updateCounter() {
 }
 
 /**
- * Clear the form inputs and remove any lingering error styles.
+ * Clear the form inputs and reset dropdowns and error styles.
  */
 function resetForm() {
   titleInput.value = '';
   descInput.value  = '';
+  if (priorityInput) {
+    priorityInput.value = 'Medium';
+  }
   titleInput.classList.remove('input-error');
 }
 
@@ -103,18 +109,22 @@ function toggleTaskStatus(taskCard) {
  * @param {string} title          — Task title text.
  * @param {string} desc           — Task description text.
  * @param {'Pending'|'Completed'} [status='Pending'] — Status property, defaults to 'Pending'.
+ * @param {'High'|'Medium'|'Low'} [priority='Medium'] — Priority level, defaults to 'Medium'.
  * @returns {HTMLElement} The constructed <article> element.
  */
-function createTaskCard(id, title, desc, status = 'Pending') {
+function createTaskCard(id, title, desc, status = 'Pending', priority = 'Medium') {
   const article = document.createElement('article');
   const isCompleted = status === 'Completed';
+  const normalizedPriority = ['High', 'Medium', 'Low'].includes(priority) ? priority : 'Medium';
 
   article.className = `task-card task-card--new${isCompleted ? ' task-card--completed' : ''}`;
   article.setAttribute('data-task-id', id);
   article.setAttribute('data-status', status);
+  article.setAttribute('data-priority', normalizedPriority);
   article.dataset.status = status;
+  article.dataset.priority = normalizedPriority;
 
-  // Header: contains title and status badge
+  // Header: contains title and badges container
   const headerDiv = document.createElement('div');
   headerDiv.className = 'task-card-header';
 
@@ -122,25 +132,45 @@ function createTaskCard(id, title, desc, status = 'Pending') {
   h3.className = 'task-title';
   h3.textContent = title;
 
-  // Interactive status badge button
+  // Badges container (Priority + Status)
+  const badgesDiv = document.createElement('div');
+  badgesDiv.className = 'task-badges';
+
+  // 1. Priority badge
+  const priorityBadge = document.createElement('span');
+  priorityBadge.className = `priority-badge priority-${normalizedPriority.toLowerCase()}`;
+  priorityBadge.setAttribute('title', `Priority: ${normalizedPriority}`);
+
+  const priorityDot = document.createElement('span');
+  priorityDot.className = 'priority-indicator';
+
+  const priorityText = document.createTextNode(` ${normalizedPriority}`);
+
+  priorityBadge.appendChild(priorityDot);
+  priorityBadge.appendChild(priorityText);
+
+  // 2. Interactive status badge button
   const badgeBtn = document.createElement('button');
   badgeBtn.type = 'button';
   badgeBtn.className = `status-badge ${isCompleted ? 'status-completed' : 'status-pending'}`;
   badgeBtn.setAttribute('title', 'Click to toggle status');
   badgeBtn.setAttribute('aria-label', `Status: ${status}. Click to toggle`);
 
-  const dot = document.createElement('span');
-  dot.className = 'status-dot';
+  const statusDot = document.createElement('span');
+  statusDot.className = 'status-dot';
 
-  const text = document.createElement('span');
-  text.className = 'status-text';
-  text.textContent = status;
+  const statusText = document.createElement('span');
+  statusText.className = 'status-text';
+  statusText.textContent = status;
 
-  badgeBtn.appendChild(dot);
-  badgeBtn.appendChild(text);
+  badgeBtn.appendChild(statusDot);
+  badgeBtn.appendChild(statusText);
+
+  badgesDiv.appendChild(priorityBadge);
+  badgesDiv.appendChild(badgeBtn);
 
   headerDiv.appendChild(h3);
-  headerDiv.appendChild(badgeBtn);
+  headerDiv.appendChild(badgesDiv);
   article.appendChild(headerDiv);
 
   // Description paragraph (if provided)
@@ -176,8 +206,9 @@ taskForm.addEventListener('submit', function handleSubmit(event) {
   event.preventDefault();
 
   // Extract and trim input values
-  const title = titleInput.value.trim();
-  const desc  = descInput.value.trim();
+  const title    = titleInput.value.trim();
+  const desc     = descInput.value.trim();
+  const priority = priorityInput ? priorityInput.value : 'Medium';
 
   // Validate — title is required
   if (!title) {
@@ -186,16 +217,23 @@ taskForm.addEventListener('submit', function handleSubmit(event) {
     return;
   }
 
-  // Create new task object with default status 'Pending'
+  // Create new task object with status 'Pending' and chosen priority
   const newTask = {
     id: generateTaskId(),
     title: title,
     desc: desc,
-    status: 'Pending'
+    status: 'Pending',
+    priority: priority
   };
 
   // Build the task card DOM element
-  const card = createTaskCard(newTask.id, newTask.title, newTask.desc, newTask.status);
+  const card = createTaskCard(
+    newTask.id,
+    newTask.title,
+    newTask.desc,
+    newTask.status,
+    newTask.priority
+  );
 
   // Prepend the new card so latest task appears first
   taskList.prepend(card);

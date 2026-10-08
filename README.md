@@ -8,11 +8,12 @@ A clean, modern, and responsive academic dashboard that helps students **organiz
 
 | Feature | Description |
 |---------|-------------|
-| **Add Tasks** | Submit a title and optional description via a validated form. |
+| **Add Tasks** | Submit a title, optional description, and priority level via a validated form. |
+| **Task Priority** | Select between High, Medium (default), and Low priority with color-coded badges. |
 | **Task Status & Toggle** | Each task defaults to "Pending" and can be toggled to "Completed" dynamically with one click. |
 | **Status Badges** | Distinct color-coded badges (warm amber for Pending, fresh emerald for Completed). |
 | **Live Counter** | A badge dynamically reflects the total number of tasks. |
-| **Pre-loaded Samples** | Pre-loaded tasks demonstrating both Pending and Completed states. |
+| **Pre-loaded Samples** | Pre-loaded tasks demonstrating High, Medium, and Low priorities along with Pending and Completed states. |
 | **Input Validation** | Blank titles are rejected with an alert and a visual error flash. |
 | **Responsive Layout** | Two-column grid on desktop; single-column stack on mobile. |
 | **Micro-animations** | Smooth slide-in animation for newly created task cards. |
